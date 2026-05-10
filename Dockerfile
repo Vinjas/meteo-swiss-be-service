@@ -1,13 +1,13 @@
 FROM node:20-bookworm-slim AS build
-ENV NODE_ENV=development
-ENV NPM_CONFIG_PRODUCTION=false
-ENV NPM_CONFIG_OMIT=
 WORKDIR /app
 COPY package*.json ./
+RUN npm config set production false \
+  && npm config delete omit \
+  && npm install --include=dev --no-audit --no-fund \
+  && test -x ./node_modules/.bin/tsc
 COPY . ./
-RUN npm ci --include=dev --no-audit --no-fund \
-  && npm run build \
-  && npm prune --omit=dev --no-audit --no-fund
+RUN ./node_modules/.bin/tsc -p tsconfig.build.json
+RUN npm prune --omit=dev --no-audit --no-fund
 
 FROM node:20-bookworm-slim AS runtime
 ENV NODE_ENV=production
