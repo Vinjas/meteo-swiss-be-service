@@ -7,6 +7,9 @@ services:
     restart: unless-stopped
     ports:
       - "8010:8010"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     environment:
       PORT: 8010
       INKYPI_DEFAULT_WIDTH: 800
