@@ -1,0 +1,22 @@
+services:
+  inkypi-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inkypi-backend
+    restart: unless-stopped
+    ports:
+      - "8010:8010"
+    environment:
+      PORT: 8010
+      INKYPI_DEFAULT_WIDTH: 800
+      INKYPI_DEFAULT_HEIGHT: 480
+      INKYPI_TIMEZONE: Europe/Zurich
+      INKYPI_CACHE_DIR: /app/data/cache
+      INKYPI_ASSETS_DIR: /app/assets
+      TZ: Europe/Madrid
+    volumes:
+      - inkypi_backend_cache:/app/data/cache
+
+volumes:
+  inkypi_backend_cache:
