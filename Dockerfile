@@ -1,7 +1,10 @@
 FROM node:20-bookworm-slim AS deps
+ENV NODE_ENV=development
+ENV NPM_CONFIG_PRODUCTION=false
+ENV NPM_CONFIG_OMIT=
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --include=dev --no-audit --no-fund
+RUN npm ci --no-audit --no-fund && npm exec -- tsc --version
 
 FROM deps AS build
 COPY . ./
