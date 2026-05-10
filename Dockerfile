@@ -1,9 +1,7 @@
 FROM node:20-bookworm-slim AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm config set production false \
-  && npm config delete omit \
-  && npm install --include=dev --no-audit --no-fund \
+RUN npm install --include=dev --no-audit --no-fund \
   && test -x ./node_modules/.bin/tsc
 COPY . ./
 RUN ./node_modules/.bin/tsc -p tsconfig.build.json
