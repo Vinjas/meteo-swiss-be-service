@@ -1,4 +1,4 @@
-import { Controller, Get, Header, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { DEFAULT_TIMEZONE } from './meteoswiss.constants';
 import { MeteoSwissRenderer } from './meteoswiss.renderer';
@@ -17,6 +17,11 @@ export class MeteoSwissController {
     const settings = this.settingsFromQuery(query);
     const timezone = query.timezone || process.env.INKYPI_TIMEZONE || DEFAULT_TIMEZONE;
     return this.meteoSwiss.loadWeather(settings, timezone);
+  }
+
+  @Post('battery')
+  async battery(@Body() body: Record<string, unknown>) {
+    return this.meteoSwiss.saveBatteryStatus(body);
   }
 
   @Get('image')

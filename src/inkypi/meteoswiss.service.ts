@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import { createWriteStream } from 'node:fs';
@@ -33,6 +33,28 @@ type ParameterRows = Record<ParameterName, TimedValue[]>;
 @Injectable()
 export class MeteoSwissService {
   private readonly logger = new Logger(MeteoSwissService.name);
+
+  async saveBatteryStatus(input: Record<string, unknown>): Promise<BatteryStatus> {
+    const vin = toNumber(input.vin ?? input.voltage);
+    if (vin === undefined) {
+      throw new BadRequestException('Battery status requires vin or voltage.');
+    }
+
+    const percent = toNumber(input.percent) ?? this.estimateLipoPercent(vin);
+    const status: BatteryStatus = {
+      vin,
+      percent: Math.max(0, Math.min(100, Math.round(percent))),
+      charging: parseBoolean(input.charging),
+      ageMinutes: 0,
+    };
+    const updated = typeof input.updated === 'string' ? input.updated : new Date().toISOString();
+
+    const file = this.batteryStatusFile();
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(file, JSON.stringify({ ...status, updated }), 'utf8');
+
+    return status;
+  }
 
   async loadWeather(settings: MeteoSwissSettings = {}, timezone = DEFAULT_TIMEZONE): Promise<MeteoSwissWeather> {
     await this.cleanupCache();
@@ -383,9 +405,10 @@ export class MeteoSwissService {
     if (String(settings.displayBattery ?? 'true') !== 'true') {
       return null;
     }
-    const batteryPath = settings.batteryStatusPath || DEFAULT_BATTERY_STATUS_PATH;
+    const batteryPath = settings.batteryStatusPath || this.batteryStatusFile();
     const candidates = [
       batteryPath,
+      path.join(this.cacheDir(), DEFAULT_BATTERY_STATUS_PATH),
       path.join(process.cwd(), batteryPath),
       path.join(process.cwd(), '..', batteryPath),
       path.join(process.cwd(), '..', 'src', batteryPath),
@@ -431,6 +454,10 @@ export class MeteoSwissService {
 
   private cacheDir(): string {
     return process.env.INKYPI_CACHE_DIR || path.resolve(process.cwd(), 'data', 'cache');
+  }
+
+  private batteryStatusFile(): string {
+    return process.env.INKYPI_BATTERY_STATUS_PATH || path.join(this.cacheDir(), DEFAULT_BATTERY_STATUS_PATH);
   }
 
   private async cleanupCache(): Promise<void> {
@@ -546,6 +573,12 @@ function parseValue(value: string): string | number {
 function toNumber(value: unknown): number | undefined {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function parseBoolean(value: unknown): boolean {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
+  return Boolean(value);
 }
 
 function degreesToRadians(value: number): number {

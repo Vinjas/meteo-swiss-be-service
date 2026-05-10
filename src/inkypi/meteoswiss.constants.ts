@@ -10,7 +10,7 @@ export const DEFAULT_TIMEZONE = 'Europe/Zurich';
 export const CACHE_TTL_SECONDS = 3 * 60 * 60;
 export const METADATA_TTL_SECONDS = 7 * 24 * 60 * 60;
 export const CACHE_RETENTION_SECONDS = 3 * 24 * 60 * 60;
-export const DEFAULT_BATTERY_STATUS_PATH = 'config/battery.json';
+export const DEFAULT_BATTERY_STATUS_PATH = 'battery.json';
 
 export const FIXED_METEOSWISS_POINT = {
   pointId: '550200',
