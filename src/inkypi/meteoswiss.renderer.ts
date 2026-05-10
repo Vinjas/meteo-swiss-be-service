@@ -78,7 +78,7 @@ export class MeteoSwissRenderer {
     <style>
       @font-face{font-family:Jost;src:url('${this.fontDataUrl('Jost.ttf')}')}
       @font-face{font-family:Jost;font-weight:700;src:url('${this.fontDataUrl('Jost-SemiBold.ttf')}')}
-      text{font-family:Jost,Arial,sans-serif;dominant-baseline:auto}
+      text{font-family:Jost,"DejaVu Sans",Arial,sans-serif;dominant-baseline:auto}
     </style>
   </defs>
   <rect width="100%" height="100%" fill="${colors.bg}"/>
