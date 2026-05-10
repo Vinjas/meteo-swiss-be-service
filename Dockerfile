@@ -1,13 +1,13 @@
-FROM node:22-bookworm-slim AS deps
+FROM node:20-bookworm-slim AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
 FROM deps AS build
 COPY . ./
 RUN npm run build
 
-FROM node:22-bookworm-slim AS runtime
+FROM node:20-bookworm-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
