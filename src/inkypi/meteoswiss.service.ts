@@ -18,6 +18,7 @@ import {
   METADATA_TTL_SECONDS,
   PARAMETERS,
 } from './meteoswiss.constants';
+import { mapMeteoSwissIcon } from './meteoswiss-icons';
 import { BatteryStatus, MeteoSwissPoint, MeteoSwissSettings, MeteoSwissWeather, TimedValue } from './types';
 import { dateKey, hourInTimeZone, spanishDayAbbr, spanishLongDate, timeLabel } from './timezone';
 
@@ -438,18 +439,7 @@ export class MeteoSwissService {
   }
 
   private mapMeteoSwissIcon(code: unknown, isDay = true): string {
-    const value = Number(code);
-    if (!Number.isFinite(value)) return isDay ? '01d' : '01n';
-    if ([1, 101].includes(value)) return isDay ? '01d' : '01n';
-    if ([2, 102, 3, 103].includes(value)) return isDay ? '022d' : '022n';
-    if ([4, 104, 5, 105].includes(value)) return isDay ? '02d' : '02n';
-    if ([6, 106, 7, 107, 8, 108].includes(value)) return '04d';
-    if ([9, 109, 10, 110, 11, 111].includes(value)) return '50d';
-    if ([12, 112, 13, 113, 14, 114, 15, 115, 16, 116].includes(value)) return '51d';
-    if ([17, 117, 18, 118, 19, 119, 20, 120, 21, 121].includes(value)) return isDay ? '10d' : '10n';
-    if ([22, 122, 23, 123, 24, 124, 25, 125, 26, 126].includes(value)) return '13d';
-    if ([27, 127, 28, 128, 29, 129, 30, 130, 31, 131].includes(value)) return '11d';
-    return '03d';
+    return mapMeteoSwissIcon(code, isDay);
   }
 
   private cacheDir(): string {
