@@ -1,15 +1,15 @@
 # InkyPi Backend
 
-Backend NestJS para generar imagenes listas para pantallas InkyPi.
+NestJS backend for generating images ready for InkyPi displays.
 
 ## Endpoints
 
-- `GET /health` devuelve estado basico.
-- `GET /inkypi/meteoswiss/weather` devuelve los datos MeteoSwiss agregados.
-- `GET /inkypi/meteoswiss/image` devuelve `image/png` con el dashboard renderizado.
-- `POST /inkypi/meteoswiss/battery` guarda el ultimo estado de bateria enviado por la Raspberry.
+- `GET /health` returns the basic service status.
+- `GET /inkypi/meteoswiss/weather` returns aggregated MeteoSwiss data.
+- `GET /inkypi/meteoswiss/image` returns `image/png` with the rendered dashboard.
+- `POST /inkypi/meteoswiss/battery` stores the latest battery status sent by the Raspberry Pi.
 
-Ejemplo:
+Example:
 
 ```bash
 npm install
@@ -17,7 +17,7 @@ npm run start:dev
 curl "http://localhost:8010/inkypi/meteoswiss/image?width=800&height=480" --output meteoswiss.png
 ```
 
-Actualizar bateria desde la Raspberry:
+Update battery status from the Raspberry Pi:
 
 ```bash
 curl -X POST "http://localhost:8010/inkypi/meteoswiss/battery" \
@@ -25,7 +25,7 @@ curl -X POST "http://localhost:8010/inkypi/meteoswiss/battery" \
   -d '{"vin":3.91,"charging":false}'
 ```
 
-Tambien acepta `percent` si la Raspberry ya lo calcula:
+It also accepts `percent` if the Raspberry Pi already calculates it:
 
 ```bash
 curl -X POST "http://localhost:8010/inkypi/meteoswiss/battery" \
@@ -39,4 +39,4 @@ curl -X POST "http://localhost:8010/inkypi/meteoswiss/battery" \
 docker compose up -d --build
 ```
 
-El proyecto incluye los iconos y fuentes necesarios en `assets/`.
+The project includes the required icons and fonts in `assets/`.
